@@ -2,325 +2,141 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BLOOD RUN: Nyamuk vs Manusia</title>
-    <link rel="icon" type="image/png" href="logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGAME</title>
+     <link rel="icon" type="image/png" href="Kgame.png">
     <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100vh;
-            padding: 0;
-            margin: 0;
-            background-color: #1a1a1a;
-        }
-
         body {
+            margin: 0;
+            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #e0e0e0;
+            background-color: #000000;
+            color: #FF0000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            padding: 10px;
         }
 
-        /* --- LOADING SCREEN --- */
-        #loading-screen {
+        /* --- HEADER TETAP --- */
+        .header-fixed {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            width: 100%;
+            height: 60px;
             background-color: #1a1a1a;
+            border-bottom: 2px solid #FF0000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.3);
         }
 
-        .loading-logo {
-            max-width: 180px;
-            animation: pulse 1.5s infinite ease-in-out;
+        /* --- FOOTER TETAP --- */
+        .footer-fixed {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #1a1a1a;
+            border-top: 2px solid #FF0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-size: 0.9rem;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,77,77,0.4)); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(255,77,77,0.8)); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,77,77,0.4)); }
-        }
-
-        .fade-out { opacity: 0; visibility: hidden; }
-
-        /* --- UI ELEMENTS --- */
-        #main-menu, #game-container {
-            background: #2d2d2d;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* Isi Konten Utama */
+        .content {
+            padding: 80px 20px; /* Padding atas bawah agar tidak tertutup header/footer */
             text-align: center;
-            width: 95%;
-            max-width: 650px;
-        }
-
-        #main-menu { display: flex; flex-direction: column; align-items: center; }
-        .menu-logo { max-width: 140px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.5)); }
-
-        .game-info {
-            display: flex; gap: 10px; margin-bottom: 25px; font-size: 0.8rem; color: #ccc;
-        }
-        .info-pill {
-            background: #3d3d3d; padding: 5px 12px; border-radius: 20px; border: 1px solid #444;
-        }
-
-        .btn {
-            padding: 12px 25px; font-size: 1.1rem; font-weight: bold; border: none;
-            border-radius: 8px; cursor: pointer; transition: 0.2s; color: white; margin: 5px;
-        }
-        .btn-red { background: #ff4d4d; }
-        .btn-red:hover { background: #cc0000; transform: scale(1.05); }
-        .btn-red:disabled { background: #555; cursor: not-allowed; }
-        .btn-grey { background: #555; }
-
-        /* --- BOARD STYLE (FIXED) --- */
-        .board {
-            display: flex;
-            justify-content: space-between;
-            margin: 40px 0;
-            background: #111;
-            border-radius: 8px;
-            height: 110px; /* Ukuran pas untuk pion */
-            border: 2px solid #333;
-            overflow: visible;
-        }
-
-        .slot {
-            flex: 1;
-            border-right: 1px solid #333;
+            width: 100%;
+            max-width: 600px; /* Membatasi lebar agar tetap di tengah (HP Style) */
+            min-height: 100vh; 
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Pion di tengah vertikal */
-            align-items: center;     /* Pion di tengah horizontal */
-            position: relative;
-            font-size: 0.7rem;
-            color: #444;
-        }
-        .slot:last-child { border-right: none; }
-        
-        /* Penanda angka di bawah slot */
-        .slot::after {
-            content: attr(data-index);
-            position: absolute;
-            bottom: 2px;
-            font-size: 10px;
-        }
-
-        /* Pion CSS */
-        .pion {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: absolute;
-            display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 10;
         }
-        
-        #human-pion { width: 28px; height: 28Apx; filter: drop-shadow(0 0 8px #4dadff); }
-        #mosquito-pion { width: 45px; height: 45px; filter: drop-shadow(0 0 10px #ff4d4d); z-index: 11; }
-        
-        .pion img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* --- STATUS BOX --- */
-        .status-box { margin-top: 20px; padding: 15px; border-left: 5px solid #ff4d4d; background: #383838; min-height: 90px; text-align: left; border-radius: 4px; }
-        .dice-result { font-size: 1.1rem; font-weight: bold; color: #ffca28; margin-top: 5px; }
-        
-        /* Modal Rulebook */
-        #rulebook-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92); z-index: 200; justify-content: center; align-items: center; flex-direction: column;
+        .logo-kgame {
+            width: 120px; /* Ukuran lebih pas untuk HP */
+            height: auto;
+            margin: 20px auto;
         }
-        #rulebook-modal img { width: 85%; max-width: 300px; border: 3px solid #ff4d4d; border-radius: 12px; }
 
-        .win-display-img { max-width: 100px; margin-top: 10px; display: block; }
+        h1 {
+            font-size: 1.5rem; /* Ukuran teks judul yang responsif */
+            margin-bottom: 30px;
+        }
+
+        .game-container {
+            width: 100%;
+        }
+
+        .game-item {
+            margin-bottom: 40px;
+            background: #111;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #333;
+        }
+
+        .game-logo {
+            width: 80%; /* Lebar logo menyesuaikan layar HP */
+            max-width: 250px;
+            height: auto;
+            transition: transform 0.3s;
+            border-radius: 10px;
+        }
+
+        .game-logo:hover {
+            transform: scale(1.05);
+        }
+
+        a {
+            text-decoration: none;
+            color: #FF0000;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Responsivitas Tambahan */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.2rem; }
+            .logo-kgame { width: 100px; }
+            .game-logo { width: 90%; }
+        }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music" loop>
-        <source src="Shiki OP 1 [Blu-Ray].mp3" type="audio/mpeg">
-    </audio>
+    
+    <main class="content">
+        <img src="Kgame.png" alt="Kgame Developer Icon" class="logo-kgame">
+        <h1>Selamat datang Di Website KGAME</h1>
 
-    <div id="loading-screen">
-        <img src="logo.png" alt="LOGO" class="loading-logo">
-        <div style="color:#ff4d4d; letter-spacing:4px; margin-top:10px; font-weight:bold;">LOADING...</div>
-    </div>
-
-    <div id="main-menu">
-        <img src="logo.png" alt="BLOOD RUN" class="menu-logo">
-        <div class="game-info">
-            <div class="info-pill">👤 1 Player</div>
-            <div class="info-pill">🩸 13+</div>
-             <div class="info-pill">🕒 5m-10m</div>
-        </div>
-        <button class="btn btn-red" style="width: 220px;" onclick="startGame()">1. Play Game</button>
-        <button class="btn btn-red" style="width: 220px;" onclick="toggleRulebook(true)">2. Rulebook</button>
-        <button id="btnGame" class="btn btn-red" style="width: 220px;">
-        3. KGAME
-    </button>
-
-    <div id="rulebook-modal">
-        <img src="rulebook.png" alt="Rulebook">
-        <button class="btn btn-grey" onclick="toggleRulebook(false)" style="margin-top:20px;">Tutup</button>
-    </div>
-
-    <div id="game-container" style="display:none;">
-        <div class="board" id="board">
-            <div class="slot" data-index="0"></div>
-            <div class="slot" data-index="1"></div>
-            <div class="slot" data-index="2"></div>
-            <div class="slot" data-index="3"></div>
-            <div class="slot" data-index="4"></div>
-            <div class="slot" data-index="5"></div>
-            <div class="slot" data-index="6"></div>
-            <div class="slot" data-index="7"></div>
-            <div class="slot" data-index="8"></div>
-            <div class="slot" data-index="9"></div>
-            <div class="slot" data-index="10"></div>
-            
-            <div id="human-pion" class="pion"><img src="manusiakarakter.png" alt="🏃"></div>
-            <div id="mosquito-pion" class="pion"><img src="nyamukkarakter.png" alt="🦟"></div>
-        </div>
-
-        <div class="status-box">
-            <div id="message">Lari dari kejaran nyamuk!</div>
-            <div id="dice-val" class="dice-result"></div>
-        </div>
-
-        <div class="controls" style="margin-top:20px;">
-            <button id="roll-btn" class="btn btn-red" onclick="playTurn()">Kocok Dadu</button>
-            <button class="btn btn-grey" onclick="backToMenu()">Menu Utama</button>
-            <div style="margin-top:15px;">
-                <button id="music-btn" class="btn-grey" style="background:transparent; border:1px solid #666; color:#999; padding:5px 15px; border-radius:20px; font-size:0.8rem;" onclick="toggleMusic()">🎵 Music: OFF</button>
+        <div class="game-container">
+            <div class="game-item">
+                <a href="https://francopudge.github.io/infeksi0/" target="_blank">
+                    <img src="logo1.png" alt="Logo Infeksi 0" class="game-logo">
+                    <p>Mainkan Infeksi-0</p>
+                </a>
             </div>
-        </div>
-    </div>
 
-    <script>
-        const bgMusic = document.getElementById('bg-music');
-        const musicBtn = document.getElementById('music-btn');
-        let isPlaying = false;
-        let humanPos = 3, mosquitoPos = 0, gameOver = false;
-
-        function toggleMusic() {
-            if (isPlaying) {
-                bgMusic.pause();
-                musicBtn.innerText = "🎵 Music: OFF";
-            } else {
-                bgMusic.play().catch(e => console.log("Audio play blocked"));
-                musicBtn.innerText = "🎶 Music: ON";
-            }
-            isPlaying = !isPlaying;
-        }
-
-        window.addEventListener('load', () => {
-            setTimeout(() => { document.getElementById('loading-screen').classList.add('fade-out'); }, 2000);
-        });
-
-        function startGame() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-            resetGame();
-        }
-
-        function toggleRulebook(show) { document.getElementById('rulebook-modal').style.display = show ? 'flex' : 'none'; }
-        function backToMenu() {
-            document.getElementById('main-menu').style.display = 'flex';
-            document.getElementById('game-container').style.display = 'none';
-        }
-
-        // FUNGSI UTAMA: Memindahkan pion ke dalam elemen slot
-        function updatePositions() {
-            const slots = document.querySelectorAll('.slot');
-            const hPion = document.getElementById('human-pion');
-            const mPion = document.getElementById('mosquito-pion');
-
-            // Pastikan posisi dalam batas 0-10
-            const hIdx = Math.min(Math.max(humanPos, 0), 10);
-            const mIdx = Math.min(Math.max(mosquitoPos, 0), 10);
-
-            // Pindahkan elemen pion ke dalam div slot sebagai "anak"
-            slots[hIdx].appendChild(hPion);
-            slots[mIdx].appendChild(mPion);
-        }
-
-        function playTurn() {
-            if (gameOver) return;
-
-            // Giliran Manusia
-            const hRoll = Math.floor(Math.random() * 6) + 1;
-            let move = hRoll >= 4 ? hRoll - 3 : 0;
-            humanPos = Math.min(humanPos + move, 10);
+            <div class="game-item">
+                <a href="https://francopudge.github.io/bloodrun/" target="_blank">
+                    <img src="logo2.png" alt="Logo Bloodrun" class="game-logo">
+                    <p>Mainkan BloodRun</p>
+                </a>
+            </div>
             
-            document.getElementById('dice-val').innerText = `Dadu Kamu: ${hRoll} (Maju ${move})`;
-            updatePositions();
+        </div>
+    </main>
 
-            if (humanPos >= 10) {
-                return endGame("SELAMAT! Kamu berhasil kabur!", "#4dadff", "manusiamenang.png");
-            }
-
-            document.getElementById('roll-btn').disabled = true;
-            document.getElementById('message').innerText = "Nyamuk sedang terbang...";
-
-            // Giliran Nyamuk (Delay sedikit agar dramatis)
-            setTimeout(() => {
-                const mRoll = Math.floor(Math.random() * 6) + 1;
-                let mMove = mRoll >= 4 ? mRoll - 3 : 0;
-                mosquitoPos = Math.min(mosquitoPos + mMove, 10);
-                
-                document.getElementById('dice-val').innerText += ` | Dadu Nyamuk: ${mRoll} (Maju ${mMove})`;
-                updatePositions();
-
-                if (mosquitoPos >= humanPos) {
-                    endGame("PLAK! Kamu kena gigit!", "#ff4d4d", "nyamukmenang.png");
-                } else {
-                    document.getElementById('roll-btn').disabled = false;
-                    document.getElementById('message').innerText = "Ayo lari lagi!";
-                }
-            }, 800);
-        }
-
-        function endGame(msg, color, img) {
-            gameOver = true;
-            const msgEl = document.getElementById('message');
-            msgEl.innerHTML = `<div>${msg}</div><img src="${img}" class="win-display-img">`;
-            msgEl.style.color = color;
-            document.getElementById('roll-btn').disabled = true;
-        }
-
-        function resetGame() {
-            humanPos = 3; 
-            mosquitoPos = 0; 
-            gameOver = false;
-            document.getElementById('message').innerText = "Lari dari kejaran nyamuk!";
-            document.getElementById('message').style.color = "#e0e0e0";
-            document.getElementById('dice-val').innerText = "";
-            document.getElementById('roll-btn').disabled = false;
-            updatePositions();
-        }
-
-        // Mengambil tombol berdasarkan ID
-const tombol = document.getElementById('btnGame');
-
-// Memberikan perintah klik
-tombol.onclick = function() {
-    window.location.href = 'https://francopudge.github.io/game/';
-};
-    </script>
+    
 </body>
 </html>
